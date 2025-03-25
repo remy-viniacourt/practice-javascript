@@ -12,4 +12,4 @@ This project follows an example from OpenClassrooms to practice JavaScript conce
 
 ### 1. Clone the repository
 ```sh
-git clone https://github.com/remy-viniacourt/practice-javascript/projects/openclassrooms-azertype.git
+git clone https://github.com/remy-viniacourt/practice-javascript.git
