@@ -4,6 +4,11 @@
  *
  *********************************************************************************/
 
+function afficherProposition(proposition) {
+   let divZonePropostion = document.querySelector(".zoneProposition")
+    divZonePropostion.innerText = proposition
+}
+
 /**
  * Cette fonction affiche le score de l'utilisateur
  * @param {number} score : le score de l'utilisateur
@@ -23,15 +28,22 @@ function lancerJeu() {
     // Initialisations
     let score = 0
     let nbMotsProposes = 0
+    let compteur = 0
 
-    // Récupération de l'élément écrit par l'utilisateur
+    // Récupération de l'élément écrit par l'utilisateur lors du clic sur le bonton valider
     let inputEcriture = document.getElementById("inputEcriture")
-
-    // Récupération du bouton valider + écoute sur le click
-    let monBouton = document.getElementById("btnValiderMot")
-    monBouton.addEventListener("click", function () {
-        console.log(inputEcriture.value)
-    });
+    let btnValiderMot = document.getElementById("btnValiderMot")
+    afficherProposition(listeMots[compteur])
+    btnValiderMot.addEventListener("click", () => {
+        compteur++
+        inputEcriture.value = ''
+        if(listeMots[compteur] === undefined){
+            afficherProposition("Le jeu est fini")
+            btnValiderMot.disabled = true
+        } else {
+            afficherProposition(listeMots[compteur])
+        }
+    })
 
     // On utilise la lise des mots pour lancer la partie
         score = lancerBoucleDeJeu(listeMots)
