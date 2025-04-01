@@ -35,7 +35,11 @@ function lancerJeu() {
     let btnValiderMot = document.getElementById("btnValiderMot")
     afficherProposition(listeMots[compteur])
     btnValiderMot.addEventListener("click", () => {
+        if(listeMots[compteur] === inputEcriture.value){
+            score++
+        }
         compteur++
+        afficherResultat(score, compteur)
         inputEcriture.value = ''
         if(listeMots[compteur] === undefined){
             afficherProposition("Le jeu est fini")
@@ -43,11 +47,6 @@ function lancerJeu() {
         } else {
             afficherProposition(listeMots[compteur])
         }
+        afficherResultat(score, compteur)
     })
-
-    // On utilise la lise des mots pour lancer la partie
-        score = lancerBoucleDeJeu(listeMots)
-        nbMotsProposes = listeMots.length
-
-    afficherResultat(score, nbMotsProposes)
 }
