@@ -30,10 +30,12 @@ function lancerJeu() {
     let nbMotsProposes = 0
     let compteur = 0
 
-    // Récupération de l'élément écrit par l'utilisateur lors du clic sur le bonton valider
+    // Récupération des différents éléments de la page nécessaires (zone de texte + bouton valider) et affichage du premier mot de la liste
     let inputEcriture = document.getElementById("inputEcriture")
     let btnValiderMot = document.getElementById("btnValiderMot")
     afficherProposition(listeMots[compteur])
+
+    // Lors du clic sur valider on vient comparer la valeur de la liste avec celle rentrée par l'utilisateur, on ajuste le score en fonction et on vide la zone de texte pour le prochain mot
     btnValiderMot.addEventListener("click", () => {
         if(listeMots[compteur] === inputEcriture.value){
             score++
@@ -41,12 +43,13 @@ function lancerJeu() {
         compteur++
         afficherResultat(score, compteur)
         inputEcriture.value = ''
+
+        // Si on arrive au bout du tableau, on l'affiche et on désactive le bouton valider. Sinon on affiche le prochain mot de la liste
         if(listeMots[compteur] === undefined){
             afficherProposition("Le jeu est fini")
             btnValiderMot.disabled = true
         } else {
             afficherProposition(listeMots[compteur])
         }
-        afficherResultat(score, compteur)
     })
 }
