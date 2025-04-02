@@ -27,17 +27,36 @@ function afficherResultat(score, nbMotsProposes) {
 function lancerJeu() {
     // Initialisations
     let score = 0
-    let nbMotsProposes = 0
     let compteur = 0
+    let choixJeu = 0
 
-    // Récupération des différents éléments de la page nécessaires (zone de texte + bouton valider) et affichage du premier mot de la liste
+    // Le mode de jeu cochée par défaut étant "Mots", on affiche le premier mot de cette liste
+    let listeProposition = listeMots
+    afficherProposition(listeProposition[compteur])
+
+    // Au clic sur le bouton permettant de choisir le mode de jeu, on change la proposition affichée
+    let listeBtnRadio = document.querySelectorAll('input[name="optionSource"]')
+    listeBtnRadio.forEach(input => {
+        input.addEventListener('change', e => {
+            if(compteur !== listeProposition.length) {
+                choixJeu = input.value
+                if (choixJeu === "1") {
+                    listeProposition = listeMots
+                } else if (choixJeu === "2") {
+                    listeProposition = listePhrases
+                }
+                afficherProposition(listeProposition[compteur])
+            }
+        })
+    })
+
+    // Récupération des différents éléments de la page nécessaires (zone de texte + bouton valider)
     let inputEcriture = document.getElementById("inputEcriture")
     let btnValiderMot = document.getElementById("btnValiderMot")
-    afficherProposition(listeMots[compteur])
 
     // Lors du clic sur valider on vient comparer la valeur de la liste avec celle rentrée par l'utilisateur, on ajuste le score en fonction et on vide la zone de texte pour le prochain mot
     btnValiderMot.addEventListener("click", () => {
-        if(listeMots[compteur] === inputEcriture.value){
+        if(listeProposition[compteur] === inputEcriture.value){
             score++
         }
         compteur++
@@ -45,11 +64,11 @@ function lancerJeu() {
         inputEcriture.value = ''
 
         // Si on arrive au bout du tableau, on l'affiche et on désactive le bouton valider. Sinon on affiche le prochain mot de la liste
-        if(listeMots[compteur] === undefined){
+        if(listeProposition[compteur] === undefined){
             afficherProposition("Le jeu est fini")
             btnValiderMot.disabled = true
         } else {
-            afficherProposition(listeMots[compteur])
+            afficherProposition(listeProposition[compteur])
         }
     })
 }
