@@ -9,6 +9,7 @@ function afficherProposition(proposition) {
     divZonePropostion.innerText = proposition
 }
 
+
 /**
  * Cette fonction affiche le score de l'utilisateur
  * @param {number} score : le score de l'utilisateur
@@ -19,6 +20,7 @@ function afficherResultat(score, nbMotsProposes) {
     let afficherScore = `${score} / ${nbMotsProposes}`
     spanScore.innerText = afficherScore
 }
+
 
 /**
  * Cette fonction construit et affiche l'email.
@@ -31,26 +33,81 @@ function afficherEmail(nom, email, score) {
     location.href = mailto
 }
 
-/**
- * Cette fonction vérifie que le nom soit valide et retourne true ou false.
- * @param {string} nom : le nom du joueur
- */
-function validerNom(nom){
-   if (nom.length >= 2){
-       return true
-   }
-   return false
-}
 
 /**
- * Cette fonction vérifie que l'email soit valid et retourne true ou false.
+ * Cette fonction vérifie que le nom soit valide.
+ * @param {string} nom : le nom du joueur
+ * @throws {error} Si le nom n'est pas valide
+ */
+function validerNom(nom){
+    if (nom.length < 2) {
+        throw new Error(`Le champ nom n'est pas valide`)
+    }
+}
+
+
+/**
+ * Cette fonction vérifie que l'email soit valide.
  * @param {string} email : l'email du destinataire
+ * @throws {error} Si l'email n'est pas valide
  */
 function validerEmail(email){
     let regexEmail = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+")
-    let resultatEmail = regexEmail.test(email)
-    return resultatEmail
+    if(!regexEmail.test(email)){
+        throw new Error(`Le champ email n'est pas valide`)
+    }
 }
+
+
+/**
+ * Cette fonction permet d'afficher l'erreur à la fin de la popup
+ * @param {string} messageErreur : le message d'erreur a envoyé si les infos données sont incorrects
+ */
+function afficherMessageErreur(messageErreur){
+    // On récupère la popup ainsi que span qui contient le message d'erreur
+    let popup = document.querySelector(".popup");
+    let span = popup.querySelector(".messageErreur");
+
+    // On test si le message d'erreur existe déjà, si oui on le met à jour ou on le vide, si non on le créer et ajoutons le message d'erreur
+    if (!span) {
+        span = document.createElement("span");
+        span.classList.add("messageErreur");
+        popup.appendChild(span);
+    }
+    span.innerText = messageErreur || "";  // Si messageErreur est vide, on vide le texte
+}
+
+
+/**
+ * Cette fonction permet de gérer le formulaire, on récupère les valeurs rentrées et on vérifie le contenu.
+ * @param {string} scoreEnvoyer : le score à la fin du jeu à envoyer par mail
+ */
+function gererFormulaire(scoreEnvoyer){
+    // On empêche le comportement par défaut de la page web au submit et on récupère les infos du form
+    let form = document.querySelector('form')
+    form.addEventListener('submit', e => {
+        e.preventDefault()
+
+        try{
+            // On supprime le message d'erreur avant un nouvel essai
+            afficherMessageErreur("")
+            // On récupère les infos données par l'utilisateur : nom et mail
+            let nom = document.getElementById("nom").value
+            let email = document.getElementById("email").value
+
+            // On check si les infos données sont valides
+            validerNom(nom)
+            validerEmail(email)
+
+            // Si tout est valide, on envoie le mail
+            afficherEmail(nom, email, scoreEnvoyer)
+
+        } catch(error) {
+            afficherMessageErreur(error.message)
+        }
+    })
+}
+
 
 /**
  * Cette fonction lance le jeu.
@@ -104,22 +161,6 @@ function lancerJeu() {
             afficherProposition(listeProposition[compteur])
         }
     })
-
-    // On empêche le comportement par défaut de la page web au submit et on récupère les infos du form
-    let form = document.querySelector('form')
-    form.addEventListener('submit', e => {
-        e.preventDefault()
-
-        // On récupère les infos données par l'utilisateur : nom et mail
-        let nom = document.getElementById("nom").value
-        let email = document.getElementById("email").value
-        let scoreEmail = `${score} / ${compteur}`
-
-        // On check si les infos données sont valides, si oui on envoie le mail si non on affiche une erreur
-        if(validerNom(nom) && validerEmail(email)) {
-            afficherEmail(nom, email, scoreEmail)
-        }else {
-            console.log("Le nom ou l'email n'est pas valide")
-        }
-    })
+    let scoreEmail = `${score} / ${compteur}`
+    gererFormulaire(scoreEmail)
 }
